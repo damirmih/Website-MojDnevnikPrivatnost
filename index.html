@@ -1,0 +1,428 @@
+<title>Privatnost · Do petice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    /* Neutrali su blago pomereni ka mornarskoj boji iz ikonice aplikacije. */
+    --ground: #F2F5F6;
+    --surface: #FFFFFF;
+    --ink: #14232C;
+    --ink-soft: #4A5D68;
+    --ink-faint: #7B8C96;
+    --rule: #DCE3E6;
+    --accent: #1F5F7A;
+    --accent-soft: #E4EEF2;
+    --good: #2F6B4F;
+    --good-soft: #E3F0E8;
+    --shadow: 0 1px 2px rgba(20, 35, 44, .06), 0 8px 24px -12px rgba(20, 35, 44, .18);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0B141A;
+      --surface: #131F27;
+      --ink: #E8EFF2;
+      --ink-soft: #A6B7C0;
+      --ink-faint: #74888F;
+      --rule: #24343D;
+      --accent: #7FC3DE;
+      --accent-soft: #17313D;
+      --good: #86C7A2;
+      --good-soft: #142A21;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0B141A;
+    --surface: #131F27;
+    --ink: #E8EFF2;
+    --ink-soft: #A6B7C0;
+    --ink-faint: #74888F;
+    --rule: #24343D;
+    --accent: #7FC3DE;
+    --accent-soft: #17313D;
+    --good: #86C7A2;
+    --good-soft: #142A21;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .6);
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4.5rem) clamp(1.15rem, 5vw, 2rem) 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+
+  /* --- Zaglavlje --- */
+
+  .masthead { display: flex; flex-direction: column; gap: .9rem; }
+
+  .stamp {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .7rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .55rem;
+    align-items: baseline;
+  }
+  .stamp span::after { content: " ·"; color: var(--rule); }
+  .stamp span:last-child::after { content: ""; }
+
+  h1 {
+    font-family: Newsreader, Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(2.1rem, 6.5vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -.015em;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .lede {
+    font-family: Newsreader, Georgia, serif;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    max-width: 34rem;
+  }
+
+  .langswitch {
+    font-size: .85rem;
+    color: var(--ink-faint);
+  }
+  .langswitch a { color: var(--accent); }
+
+  /* --- Istaknuti sažetak: jedini podignut blok na stranici --- */
+
+  .summary {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--good);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    padding: 1.4rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
+  }
+  .summary h2 {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--good);
+    margin: 0;
+  }
+  .summary p { margin: 0; }
+  .summary strong { font-weight: 600; }
+
+  /* --- Sekcije --- */
+
+  section { display: flex; flex-direction: column; gap: .85rem; }
+
+  h2.section {
+    font-family: Newsreader, Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    margin: 0;
+    padding-top: 1.6rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    gap: .8rem;
+    align-items: baseline;
+  }
+  h2.section .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .8rem;
+    font-weight: 500;
+    color: var(--ink-faint);
+    flex: none;
+    padding-top: .2rem;
+  }
+
+  h3 {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: .95rem;
+    font-weight: 600;
+    margin: .6rem 0 -.35rem;
+  }
+
+  p { margin: 0; max-width: 36rem; }
+  a { color: var(--accent); text-underline-offset: .18em; }
+  a:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ul { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: .4rem; max-width: 36rem; }
+  li::marker { color: var(--ink-faint); }
+
+  /* --- Tabela podataka --- */
+
+  .table-wrap { overflow-x: auto; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 26rem;
+    font-size: .92rem;
+  }
+  th, td {
+    text-align: left;
+    padding: .6rem .8rem .6rem 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  th {
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-bottom-color: var(--ink-faint);
+  }
+  td:first-child { font-weight: 500; padding-right: 1.4rem; white-space: nowrap; }
+  td:last-child, th:last-child { padding-right: 0; color: var(--ink-soft); }
+
+  /* --- „Ne radi" lista --- */
+
+  .never { display: flex; flex-direction: column; gap: 0; }
+  .never div {
+    display: flex;
+    gap: .8rem;
+    align-items: baseline;
+    padding: .6rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .never div:last-child { border-bottom: none; }
+  .never .mark {
+    font-family: "IBM Plex Mono", monospace;
+    color: var(--good);
+    font-size: .9rem;
+    flex: none;
+  }
+
+  /* --- Kontakt --- */
+
+  .contact {
+    background: var(--accent-soft);
+    border-radius: 4px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+  .contact .mail {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 1rem;
+    word-break: break-all;
+  }
+
+  .todo {
+    background: #FFE9A8;
+    color: #4A3708;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .82rem;
+    padding: .15em .45em;
+    border-radius: 3px;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.5rem;
+    font-size: .85rem;
+    color: var(--ink-faint);
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+  }
+
+  .en h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="stamp">
+      <span>Do petice</span>
+      <span>iOS</span>
+      <span>Verzija 1.0</span>
+      <span>6. septembar 2026.</span>
+    </div>
+    <h1>Politika privatnosti</h1>
+    <p class="lede">Do petice je dnevnik ocena, raspored časova i planer obaveza za srednjoškolce. Sve što u njega upišeš ostaje kod tebe.</p>
+    <p class="langswitch"><a href="#english">Read this in English ↓</a></p>
+  </header>
+
+  <div class="summary">
+    <h2>Ukratko</h2>
+    <p><strong>Aplikacija ne prikuplja nikakve podatke o tebi.</strong> Nema naloga ni registracije, nema reklama, nema analitike, nema praćenja i ne postoji server na koji bi se tvoji podaci slali. Sve što uneseš čuva se na tvom telefonu, a ako uključiš iCloud, i u tvom ličnom iCloud nalogu.</p>
+  </div>
+
+  <section>
+    <h2 class="section"><span class="num">01</span>Ko stoji iza aplikacije</h2>
+    <p>Aplikaciju razvija Damir Mihajlović kao pojedinac, ne kao firma. Nema zaposlenih, saradnika ni partnera koji bi imali pristup bilo čemu što je u aplikaciji.</p>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">02</span>Šta aplikacija čuva</h2>
+    <p>Aplikacija čuva samo ono što ti sam u nju upišeš:</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Šta</th><th>Na primer</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Predmeti</td><td>naziv, nastavnik, boja, ikonica, fond časova, željena ocena</td></tr>
+          <tr><td>Ocene</td><td>ocene 1–5, plus i minus iz aktivnosti, vladanje, opisne ocene</td></tr>
+          <tr><td>Raspored časova</td><td>dan, redni broj časa, učionica, smena, beleška</td></tr>
+          <tr><td>Obaveze</td><td>kontrolni, pismeni, odgovaranje, podteme, izmereno vreme učenja</td></tr>
+          <tr><td>Beleške i podsetnici</td><td>tekst koji sam napišeš, rok, vreme podsetnika</td></tr>
+          <tr><td>Podešavanja</td><td>datumi polugodišta, trajanje časa i odmora, izabrani prikazi</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Aplikacija ne traži tvoje ime, mejl, broj telefona, školu, lokaciju, kontakte, fotografije ni bilo koji drugi podatak sa telefona. Nijedno od tih ovlašćenja se ne traži jer se nijedno ne koristi.</p>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">03</span>Gde se ti podaci nalaze</h2>
+    <p>U bazi unutar same aplikacije, na tvom uređaju. Ta baza je zaštićena kao i svi ostali podaci aplikacija na iPhone-u i druge aplikacije joj ne mogu pristupiti.</p>
+    <p>Deo tih podataka aplikacija upisuje i u zajednički prostor sa svojim widgetima, isključivo da bi widget na početnom i zaključanom ekranu mogao da prikaže tvoj sledeći čas, prosek ili tajmer učenja. Taj prostor ne napušta uređaj.</p>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">04</span>iCloud sinhronizacija</h2>
+    <p>Ako na uređaju imaš uključen iCloud Drive, aplikacija koristi tvoj lični iCloud nalog da bi isti podaci bili dostupni na svim tvojim Apple uređajima. Ti podaci putuju između tvojih uređaja i Apple-ovog iCloud servisa, i njih čuva Apple pod <a href="https://www.apple.com/legal/privacy/" rel="noopener">Apple-ovom politikom privatnosti</a>.</p>
+    <p><strong>Autor aplikacije nema pristup toj kopiji.</strong> To je privatni deo tvog iCloud naloga, isto kao i podaci bilo koje druge aplikacije koja koristi iCloud.</p>
+    <p>Ako ne želiš sinhronizaciju, isključi iCloud Drive za ovu aplikaciju u Podešavanjima telefona. Aplikacija tada radi potpuno lokalno.</p>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">05</span>Obaveštenja</h2>
+    <p>Aplikacija te može podsetiti na kontrolni ili obavezu. Ta obaveštenja zakazuje sam telefon i ona nikada ne izlaze sa uređaja — ne postoji server koji ih šalje. Dozvolu za obaveštenja tražimo tek kada prvi put postaviš podsetnik, i možeš je uskratiti; sve ostalo u aplikaciji radi i bez nje.</p>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">06</span>Izvoz i uvoz kopije</h2>
+    <p>U Podešavanjima možeš da napraviš kopiju svojih podataka kao datoteku. Tu datoteku pravi aplikacija na tvoj zahtev, a ti sam biraš gde je čuvaš i sa kim je deliš. Aplikacija je nikuda ne šalje sama.</p>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">07</span>Veza ka elektronskom dnevniku</h2>
+    <p>Aplikacija ima prečicu koja u pregledaču otvara adresu elektronskog dnevnika tvoje škole. Tu adresu ti sam podešavaš. Kada je otvoriš, nalaziš se na sajtu svoje škole, na koji ova politika više ne važi — tamo važe pravila te škole odnosno servisa. Aplikacija ne čita ništa sa te stranice i ne zna se ni da li si se na nju prijavio.</p>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">08</span>Šta aplikacija ne radi</h2>
+    <div class="never">
+      <div><span class="mark">—</span><span>Ne prikazuje reklame, ni sopstvene ni tuđe.</span></div>
+      <div><span class="mark">—</span><span>Ne koristi analitiku ni merenje ponašanja korisnika.</span></div>
+      <div><span class="mark">—</span><span>Ne prati te kroz druge aplikacije i sajtove.</span></div>
+      <div><span class="mark">—</span><span>Ne sadrži nijednu biblioteku ni alat treće strane.</span></div>
+      <div><span class="mark">—</span><span>Ne pravi nalog i ne traži lozinku.</span></div>
+      <div><span class="mark">—</span><span>Ne prodaje i ne ustupa podatke nikome, jer ih i nema.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">09</span>Deca i uzrast</h2>
+    <p>Aplikacija je namenjena učenicima i uzrasno je označena kao pogodna za sve. Pošto ne prikuplja nikakve podatke i ne prikazuje reklame, ne postoji ništa što bi se moglo prikupiti ili poslati o detetu, bez obzira na uzrast.</p>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">10</span>Brisanje podataka</h2>
+    <p>Kada obrišeš aplikaciju sa telefona, baza se briše zajedno sa njom. Ako si koristio iCloud, ta kopija se briše kroz Podešavanja telefona, u odeljku iCloud, gde možeš ukloniti podatke ove aplikacije.</p>
+    <p>Pošto nema servera, ne postoji nijedan primerak tvojih podataka koji bi trebalo tražiti da se obriše negde drugde.</p>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">11</span>Izmene ove politike</h2>
+    <p>Ako se aplikacija promeni tako da to utiče na privatnost, ova stranica se menja pre nego što nova verzija izađe, i datum na vrhu se ažurira. Trenutna verzija važi od 6. septembra 2026.</p>
+  </section>
+
+  <section>
+    <h2 class="section"><span class="num">12</span>Kontakt</h2>
+    <div class="contact">
+      <p>Pitanja o privatnosti, greške u aplikaciji ili predlozi:</p>
+      <p class="mail"><a href="mailto:dopetice.app@gmail.com">dopetice.app@gmail.com</a></p>
+      <p style="font-size:.88rem;color:var(--ink-soft)">Odgovor obično stiže u roku od nekoliko dana.</p>
+    </div>
+  </section>
+
+  <!-- ============ ENGLESKA VERZIJA ============ -->
+
+  <section class="en" id="english" style="margin-top:2rem">
+    <h2 class="section" style="border-top-width:2px"><span class="num">EN</span>Privacy Policy</h2>
+    <p class="lede" style="font-size:1.05rem">Do petice (“Straight A’s”) is a grade tracker, timetable and homework planner for high‑school students. Everything you put into it stays with you.</p>
+  </section>
+
+  <div class="summary">
+    <h2>In short</h2>
+    <p><strong>The app collects no personal data whatsoever.</strong> There is no account or sign‑up, no advertising, no analytics, no tracking, and no server for your data to be sent to. Everything you enter is stored on your own iPhone, and — if you enable it — in your own iCloud account.</p>
+  </div>
+
+  <section class="en">
+    <h3>Who makes it</h3>
+    <p>The app is developed by Damir Mihajlović as an individual, not a company. Nobody else has access to anything inside the app.</p>
+
+    <h3>What is stored</h3>
+    <p>Only what you type in yourself: subjects, grades (1–5, plus/minus marks, conduct and descriptive marks), your timetable, assignments and study‑timer durations, notes, reminders and app settings. The app never asks for your name, email, phone number, school, location, contacts or photos, and requests no system permissions beyond notifications.</p>
+
+    <h3>Where it lives</h3>
+    <p>In a database inside the app on your device, protected by iOS like any other app’s data. A small part of it is also written to a shared container so the app’s own widgets can show your next class, your average or a running study timer. That container never leaves the device.</p>
+
+    <h3>iCloud</h3>
+    <p>If iCloud Drive is on, the app uses your personal iCloud account so the same data is available on all of your Apple devices. That copy is held by Apple under <a href="https://www.apple.com/legal/privacy/" rel="noopener">Apple’s Privacy Policy</a>. <strong>The developer cannot access it.</strong> Turning iCloud Drive off for this app makes it fully local.</p>
+
+    <h3>Notifications</h3>
+    <p>Reminders for tests and assignments are scheduled locally by your iPhone and never leave the device — no server sends them. Permission is requested only when you set your first reminder, and everything else works without it.</p>
+
+    <h3>Backups</h3>
+    <p>You can export your data to a file from Settings. The app creates that file at your request; where you keep it and who you share it with is entirely up to you. The app never sends it anywhere on its own.</p>
+
+    <h3>Link to your school’s e‑diary</h3>
+    <p>The app can open your school’s electronic diary — a web address you configure yourself — in the browser. Once there, that site’s own privacy terms apply, not this policy. The app reads nothing from that page.</p>
+
+    <h3>What the app never does</h3>
+    <p>No ads. No analytics. No cross‑app or cross‑site tracking. No third‑party SDKs or libraries of any kind. No accounts or passwords. No selling or sharing of data — there is none to sell.</p>
+
+    <h3>Children</h3>
+    <p>The app is made for students and is rated suitable for all ages. Because it collects nothing and shows no advertising, there is nothing that could be gathered about a child of any age.</p>
+
+    <h3>Deleting your data</h3>
+    <p>Deleting the app removes its database with it. If you used iCloud, that copy can be removed from your iPhone’s Settings under iCloud. As there is no server, no copy of your data exists anywhere else.</p>
+
+    <h3>Changes</h3>
+    <p>If the app ever changes in a way that affects privacy, this page will be updated before that version ships, and the date at the top will change. This version is effective 6 September 2026.</p>
+
+    <h3>Contact</h3>
+    <p class="mail" style="font-family:'IBM Plex Mono',monospace"><a href="mailto:dopetice.app@gmail.com">dopetice.app@gmail.com</a></p>
+  </section>
+
+  <footer>
+    <p>Do petice · Politika privatnosti · Poslednja izmena 6. septembra 2026.</p>
+    <p>Ova stranica se odnosi na aplikaciju „Do petice“ za iPhone.</p>
+  </footer>
+
+</div>
