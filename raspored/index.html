@@ -70,6 +70,7 @@
   <section class="card">
     <a class="btn primary" id="openApp" href="#"></a>
     <p class="hint" id="openHint"></p>
+    <p class="hint" id="updateHint"></p>
     <a class="btn" id="ios" href="#" hidden></a>
     <a class="btn" id="android" href="#" hidden></a>
     <p class="hint" id="androidSoon" hidden></p>
@@ -106,6 +107,8 @@
     sr: {
       title: "Raspored časova", lead: "Neko ti je poslao raspored. Otvori ga u aplikaciji Moj Dnevnik.",
       leadBad: "Ovaj link ne sadrži raspored ili je oštećen. Zamoli onoga ko ga je poslao da ga pošalje ponovo.",
+      update: function (store) { return "Ako se aplikacija otvori, a raspored se ne pojavi, ažuriraj je na najnoviju verziju u " + store + "."; },
+      storeIOS: "App Store-u", storeAndroid: "Google Play-u", storeOther: "prodavnici",
       open: "Otvori u aplikaciji Moj Dnevnik", openHint: "Ako aplikacija nije instalirana, preuzmi je ispod. Besplatna je, bez naloga i bez reklama.",
       noApp: "Nemaš aplikaciju?", ios: "Preuzmi na App Store-u", android: "Preuzmi na Google Play-u",
       androidSoon: "Android verzija uskoro stiže na Google Play.", desktop: "Otvori ovaj link na telefonu da uvezeš raspored.",
@@ -117,6 +120,8 @@
     en: {
       title: "Class schedule", lead: "Someone sent you a schedule. Open it in the Moj Dnevnik app.",
       leadBad: "This link has no schedule or is damaged. Ask the sender to send it again.",
+      update: function (store) { return "If the app opens but the schedule does not appear, update it to the latest version in the " + store + "."; },
+      storeIOS: "App Store", storeAndroid: "Google Play", storeOther: "app store",
       open: "Open in Moj Dnevnik", openHint: "If you don't have the app, get it below. It's free, no account, no ads.",
       noApp: "Don't have the app?", ios: "Get it on the App Store", android: "Get it on Google Play",
       androidSoon: "The Android version is coming soon to Google Play.", desktop: "Open this link on your phone to import the schedule.",
@@ -167,6 +172,7 @@
     open.removeAttribute("href");
   }
   $("openHint").textContent = T.openHint;
+  $("updateHint").textContent = T.update(isIOS ? T.storeIOS : isAndroid ? T.storeAndroid : T.storeOther);
 
   var ios = $("ios"), android = $("android");
   ios.textContent = T.ios; ios.href = iosUrl;
