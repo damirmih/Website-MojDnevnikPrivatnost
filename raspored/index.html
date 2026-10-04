@@ -79,6 +79,7 @@
 
   <section class="card" id="previewCard" hidden>
     <p class="meta" id="summary"></p>
+    <p class="hint" id="platformWarning" hidden style="color:#B3261E"></p>
     <div class="seg" id="shifts" hidden></div>
     <div class="grid"><table id="table"></table></div>
   </section>
@@ -106,8 +107,20 @@
   var TEXT = {
     sr: {
       title: "Raspored časova", lead: "Neko ti je poslao raspored. Otvori ga u aplikaciji Moj Dnevnik.",
+      backupTitle: "Kopija podataka", backupLead: "Neko ti je poslao kopiju podataka iz aplikacije Moj Dnevnik. Otvori je u aplikaciji, pa izaberi šta da uvezeš.",
+      backupSummary: function (c) {
+        var parts = [];
+        if (c.slots) parts.push("raspored: " + c.slots + " časova");
+        if (c.grades) parts.push("ocene: " + c.grades);
+        if (c.assessments) parts.push("obaveze: " + c.assessments);
+        if (c.notes) parts.push("beleške: " + c.notes);
+        if (c.reminders) parts.push("podsetnici: " + c.reminders);
+        return c.subjects + " predmeta" + (parts.length ? " · " + parts.join(" · ") : "");
+      },
+      wrongIOS: "Ova kopija je napravljena na Androidu i ne može se uvesti na iPhone.",
+      wrongAndroid: "Ova kopija je napravljena na iPhone-u i ne može se uvesti na Android.",
       leadBad: "Ovaj link ne sadrži raspored ili je oštećen. Zamoli onoga ko ga je poslao da ga pošalje ponovo.",
-      update: function (store) { return "Ako se aplikacija otvori, a raspored se ne pojavi, ažuriraj je na najnoviju verziju u " + store + "."; },
+      update: function (store) { return "Ako se aplikacija otvori, a ništa se ne pojavi, ažuriraj je na najnoviju verziju u " + store + "."; },
       storeIOS: "App Store-u", storeAndroid: "Google Play-u", storeOther: "prodavnici",
       open: "Otvori u aplikaciji Moj Dnevnik", openHint: "Ako aplikacija nije instalirana, preuzmi je ispod. Besplatna je, bez naloga i bez reklama.",
       noApp: "Nemaš aplikaciju?", ios: "Preuzmi na App Store-u", android: "Preuzmi na Google Play-u",
@@ -119,8 +132,20 @@
     },
     en: {
       title: "Class schedule", lead: "Someone sent you a schedule. Open it in the Moj Dnevnik app.",
+      backupTitle: "Backup", backupLead: "Someone sent you a backup of their data from the Moj Dnevnik app. Open it in the app, then choose what to import.",
+      backupSummary: function (c) {
+        var parts = [];
+        if (c.slots) parts.push("schedule: " + c.slots + " lessons");
+        if (c.grades) parts.push("grades: " + c.grades);
+        if (c.assessments) parts.push("assessments: " + c.assessments);
+        if (c.notes) parts.push("notes: " + c.notes);
+        if (c.reminders) parts.push("reminders: " + c.reminders);
+        return c.subjects + " subjects" + (parts.length ? " · " + parts.join(" · ") : "");
+      },
+      wrongIOS: "This backup was made on Android and cannot be imported on iPhone.",
+      wrongAndroid: "This backup was made on iPhone and cannot be imported on Android.",
       leadBad: "This link has no schedule or is damaged. Ask the sender to send it again.",
-      update: function (store) { return "If the app opens but the schedule does not appear, update it to the latest version in the " + store + "."; },
+      update: function (store) { return "If the app opens but nothing appears, update it to the latest version in the " + store + "."; },
       storeIOS: "App Store", storeAndroid: "Google Play", storeOther: "app store",
       open: "Open in Moj Dnevnik", openHint: "If you don't have the app, get it below. It's free, no account, no ads.",
       noApp: "Don't have the app?", ios: "Get it on the App Store", android: "Get it on Google Play",
@@ -144,11 +169,14 @@
   var isAndroid = /Android/.test(ua);
 
   // Zapis iz #d=… (base64url). Dužina je ograničena, a sadržaj se prikazuje samo kao tekst.
-  var payload = new URLSearchParams(location.hash.slice(1)).get("d") || "";
-  var validShape = /^[A-Za-z0-9_-]{16,8000}$/.test(payload);
+  var hashParams = new URLSearchParams(location.hash.slice(1));
+  var isBackup = hashParams.has("b");
+  var payload = hashParams.get(isBackup ? "b" : "d") || "";
+  var maxLength = isBackup ? 150000 : 8000;
+  var validShape = payload.length >= 16 && payload.length <= maxLength && /^[A-Za-z0-9_-]+$/.test(payload);
 
-  $("title").textContent = T.title;
-  $("lead").textContent = validShape ? T.lead : T.leadBad;
+  $("title").textContent = isBackup ? T.backupTitle : T.title;
+  $("lead").textContent = validShape ? (isBackup ? T.backupLead : T.lead) : T.leadBad;
   $("privacy").textContent = T.privacy;
   $("privacyLink").textContent = T.privacyLink;
 
@@ -163,9 +191,9 @@
   if (validShape) {
     if (isAndroid) {
       var fallback = CONFIG.playLive ? ";S.browser_fallback_url=" + encodeURIComponent(playUrl) : "";
-      open.href = "intent://import?d=" + payload + "#Intent;scheme=schoolos;package=" + CONFIG.playPackage + fallback + ";end";
+      open.href = "intent://import?" + (isBackup ? "b" : "d") + "=" + payload + "#Intent;scheme=schoolos;package=" + CONFIG.playPackage + fallback + ";end";
     } else {
-      open.href = "schoolos://import?d=" + payload;
+      open.href = "schoolos://import?" + (isBackup ? "b" : "d") + "=" + payload;
     }
   } else {
     open.setAttribute("aria-disabled", "true");
@@ -197,9 +225,30 @@
 
   var stream = new Blob([toBytes(payload)]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
   new Response(stream).text().then(function (text) {
-    if (text.length > 65536) return;
-    render(JSON.parse(text));
+    if (text.length > (isBackup ? 4000000 : 65536)) return;
+    var data = JSON.parse(text);
+    if (isBackup) renderBackup(data); else render(data);
   }).catch(function () { /* bez pregleda, dugmad i dalje rade */ });
+
+  function count(a) { return Array.isArray(a) ? a.length : 0; }
+
+  function renderBackup(data) {
+    if (!data || data.v !== 1 || !data.b || typeof data.b !== "object") return;
+    var b = data.b;
+    var subjects = Array.isArray(b.subjects) ? b.subjects : [];
+    var grades = 0;
+    subjects.forEach(function (s) { grades += count(s && s.grades); });
+    $("summary").textContent = T.backupSummary({
+      subjects: subjects.length, slots: count(b.slots), grades: grades,
+      assessments: count(b.assessments), notes: count(b.notes), reminders: count(b.reminders)
+    });
+    $("previewCard").hidden = false;
+    if ((data.p === "android" && isIOS) || (data.p === "ios" && isAndroid)) {
+      var warn = $("platformWarning");
+      warn.textContent = data.p === "android" ? T.wrongIOS : T.wrongAndroid;
+      warn.hidden = false;
+    }
+  }
 
   function render(data) {
     if (!data || data.v !== 1 || !Array.isArray(data.s) || !Array.isArray(data.l) || !data.t) return;
