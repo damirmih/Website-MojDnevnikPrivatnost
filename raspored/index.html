@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raspored časova · Moj Dnevnik</title>
+<meta name="description" content="Neko ti je poslao raspored časova. Otvori ga u aplikaciji Moj Dnevnik. Besplatno, bez naloga.">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta property="og:title" content="Raspored časova · Moj Dnevnik">
+<meta property="og:description" content="Otvori raspored u aplikaciji Moj Dnevnik. Besplatno, bez naloga i bez reklama.">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="light dark">
+<!-- Bez spoljnih fontova, skripti i slika: stranica ne šalje ništa trećim stranama.
+     Raspored stoji iza # u linku, pa ni ovaj server ne dobija njegov sadržaj. -->
+<style>
+  :root {
+    --ground: #F2F5F6; --surface: #FFFFFF; --ink: #14232C; --ink-soft: #4A5D68;
+    --rule: #DCE3E6; --accent: #1F5F7A; --accent-ink: #FFFFFF; --accent-soft: #E4EEF2;
+    --shadow: 0 1px 2px rgba(20,35,44,.06), 0 8px 24px -12px rgba(20,35,44,.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0B141A; --surface: #131F27; --ink: #E8EFF2; --ink-soft: #A6B7C0;
+      --rule: #24343D; --accent: #7FC3DE; --accent-ink: #0B141A; --accent-soft: #17313D;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 34rem; margin: 0 auto; padding: 28px 16px 40px; }
+  h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 6px; }
+  .lead { color: var(--ink-soft); margin: 0 0 20px; }
+  .card { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); padding: 16px; margin-bottom: 16px; }
+  .btn {
+    display: flex; align-items: center; justify-content: center; min-height: 48px; width: 100%;
+    border-radius: 14px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink);
+    font: inherit; font-weight: 600; text-decoration: none; padding: 0 16px; cursor: pointer; margin-top: 10px;
+  }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+  .btn[aria-disabled="true"] { opacity: .55; pointer-events: none; }
+  .hint { color: var(--ink-soft); font-size: .9rem; margin: 10px 2px 0; }
+  .meta { color: var(--ink-soft); font-size: .9rem; margin: 0 0 10px; }
+  .seg { display: flex; gap: 6px; margin-bottom: 10px; }
+  .seg button {
+    flex: 1; min-height: 40px; border-radius: 10px; border: 1px solid var(--rule);
+    background: transparent; color: var(--ink); font: inherit; cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
+  .grid { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: .68rem; line-height: 1.25; }
+  th, td { border-bottom: 1px solid var(--rule); padding: 5px 2px; text-align: center; vertical-align: middle; overflow-wrap: break-word; hyphens: none; }
+  th { color: var(--ink-soft); font-weight: 600; }
+  th.p { width: 2.4rem; text-align: right; padding-right: 6px; white-space: nowrap; }
+  td small { display: block; color: var(--ink-soft); font-size: .62rem; }
+  footer { color: var(--ink-soft); font-size: .85rem; margin-top: 8px; }
+  footer a { color: var(--accent); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="title"></h1>
+  <p class="lead" id="lead"></p>
+
+  <section class="card">
+    <a class="btn primary" id="openApp" href="#"></a>
+    <p class="hint" id="openHint"></p>
+    <a class="btn" id="ios" href="#" hidden></a>
+    <a class="btn" id="android" href="#" hidden></a>
+    <p class="hint" id="androidSoon" hidden></p>
+    <p class="hint" id="desktopHint" hidden></p>
+  </section>
+
+  <section class="card" id="previewCard" hidden>
+    <p class="meta" id="summary"></p>
+    <div class="seg" id="shifts" hidden></div>
+    <div class="grid"><table id="table"></table></div>
+  </section>
+
+  <footer>
+    <span id="privacy"></span>
+    <a id="privacyLink" href="../"></a>
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // Podešavanja. Kad Android aplikacija izađe na Google Play, postavi playLive na true.
+  // iosProviderToken je „pt" iz App Store Connect → Analytics → Campaigns (može i prazno).
+  var CONFIG = {
+    iosId: "6808085105",
+    iosProviderToken: "",
+    playPackage: "com.mateja.mygrades",
+    playLive: false,
+    campaign: "raspored"
+  };
+
+  var TEXT = {
+    sr: {
+      title: "Raspored časova", lead: "Neko ti je poslao raspored. Otvori ga u aplikaciji Moj Dnevnik.",
+      leadBad: "Ovaj link ne sadrži raspored ili je oštećen. Zamoli onoga ko ga je poslao da ga pošalje ponovo.",
+      open: "Otvori u aplikaciji Moj Dnevnik", openHint: "Ako aplikacija nije instalirana, preuzmi je ispod. Besplatna je, bez naloga i bez reklama.",
+      noApp: "Nemaš aplikaciju?", ios: "Preuzmi na App Store-u", android: "Preuzmi na Google Play-u",
+      androidSoon: "Android verzija uskoro stiže na Google Play.", desktop: "Otvori ovaj link na telefonu da uvezeš raspored.",
+      summary: function (l, s) { return l + " časova, " + s + " predmeta"; },
+      days: ["PON", "UTO", "SRE", "ČET", "PET", "SUB"], pre: "Pretčas", lesson: function (n) { return n + ". čas"; },
+      shift: ["Prva smena", "Druga smena"],
+      privacy: "Raspored se čita samo u tvom pregledaču i ne šalje se nikome.", privacyLink: "Politika privatnosti"
+    },
+    en: {
+      title: "Class schedule", lead: "Someone sent you a schedule. Open it in the Moj Dnevnik app.",
+      leadBad: "This link has no schedule or is damaged. Ask the sender to send it again.",
+      open: "Open in Moj Dnevnik", openHint: "If you don't have the app, get it below. It's free, no account, no ads.",
+      noApp: "Don't have the app?", ios: "Get it on the App Store", android: "Get it on Google Play",
+      androidSoon: "The Android version is coming soon to Google Play.", desktop: "Open this link on your phone to import the schedule.",
+      summary: function (l, s) { return l + " lessons, " + s + " subjects"; },
+      days: ["MON", "TUE", "WED", "THU", "FRI", "SAT"], pre: "Before 1st", lesson: function (n) { return "Lesson " + n; },
+      shift: ["First shift", "Second shift"],
+      privacy: "The schedule is read in your browser only and is not sent anywhere.", privacyLink: "Privacy policy"
+    }
+  };
+
+  var lang = (navigator.language || "sr").toLowerCase().indexOf("en") === 0 ? "en" : "sr";
+  var T = TEXT[lang];
+  document.documentElement.lang = lang;
+
+  function $(id) { return document.getElementById(id); }
+  function el(tag, text, cls) { var n = document.createElement(tag); if (text != null) n.textContent = text; if (cls) n.className = cls; return n; }
+
+  var ua = navigator.userAgent || "";
+  var isIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/.test(ua);
+
+  // Zapis iz #d=… (base64url). Dužina je ograničena, a sadržaj se prikazuje samo kao tekst.
+  var payload = new URLSearchParams(location.hash.slice(1)).get("d") || "";
+  var validShape = /^[A-Za-z0-9_-]{16,8000}$/.test(payload);
+
+  $("title").textContent = T.title;
+  $("lead").textContent = validShape ? T.lead : T.leadBad;
+  $("privacy").textContent = T.privacy;
+  $("privacyLink").textContent = T.privacyLink;
+
+  // Dugmad
+  var iosUrl = "https://apps.apple.com/app/id" + CONFIG.iosId + "?ct=" + CONFIG.campaign +
+    (CONFIG.iosProviderToken ? "&pt=" + encodeURIComponent(CONFIG.iosProviderToken) : "");
+  var playUrl = "https://play.google.com/store/apps/details?id=" + CONFIG.playPackage +
+    "&referrer=" + encodeURIComponent("utm_source=mojdnevnik&utm_medium=link&utm_campaign=" + CONFIG.campaign);
+
+  var open = $("openApp");
+  open.textContent = T.open;
+  if (validShape) {
+    if (isAndroid) {
+      var fallback = CONFIG.playLive ? ";S.browser_fallback_url=" + encodeURIComponent(playUrl) : "";
+      open.href = "intent://import?d=" + payload + "#Intent;scheme=schoolos;package=" + CONFIG.playPackage + fallback + ";end";
+    } else {
+      open.href = "schoolos://import?d=" + payload;
+    }
+  } else {
+    open.setAttribute("aria-disabled", "true");
+    open.removeAttribute("href");
+  }
+  $("openHint").textContent = T.openHint;
+
+  var ios = $("ios"), android = $("android");
+  ios.textContent = T.ios; ios.href = iosUrl;
+  android.textContent = T.android; android.href = playUrl;
+  if (!isAndroid) ios.hidden = false;
+  if (isAndroid || !isIOS) {
+    if (CONFIG.playLive) android.hidden = false;
+    else if (isAndroid) { $("androidSoon").textContent = T.androidSoon; $("androidSoon").hidden = false; }
+  }
+  if (!isIOS && !isAndroid) { $("desktopHint").textContent = T.desktop; $("desktopHint").hidden = false; }
+
+  // Pregled rasporeda (samo ako pregledač ume da raspakuje deflate-raw).
+  if (!validShape || typeof DecompressionStream === "undefined") return;
+
+  function toBytes(s) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    var bin = atob(s), out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  var stream = new Blob([toBytes(payload)]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+  new Response(stream).text().then(function (text) {
+    if (text.length > 65536) return;
+    render(JSON.parse(text));
+  }).catch(function () { /* bez pregleda, dugmad i dalje rade */ });
+
+  function render(data) {
+    if (!data || data.v !== 1 || !Array.isArray(data.s) || !Array.isArray(data.l) || !data.t) return;
+    var subjects = data.s.map(String), slots = data.l.filter(function (x) { return Array.isArray(x) && x.length >= 5; });
+    if (!slots.length) return;
+
+    $("summary").textContent = T.summary(slots.length, subjects.length);
+    $("previewCard").hidden = false;
+
+    var twoShifts = data.t.two === 1;
+    var shift = 1;
+    var shiftBox = $("shifts");
+    if (twoShifts) {
+      shiftBox.hidden = false;
+      [1, 2].forEach(function (n) {
+        var b = el("button", T.shift[n - 1]);
+        b.type = "button";
+        b.setAttribute("aria-pressed", String(n === shift));
+        b.addEventListener("click", function () {
+          shift = n;
+          Array.prototype.forEach.call(shiftBox.children, function (c, i) { c.setAttribute("aria-pressed", String(i + 1 === shift)); });
+          draw();
+        });
+        shiftBox.appendChild(b);
+      });
+    }
+
+    function draw() {
+      var rows = slots.filter(function (s) { return s[2] === shift; });
+      var days = [1, 2, 3, 4, 5];
+      if (data.t.sat === 1 || rows.some(function (s) { return s[0] === 6; })) days.push(6);
+      var periods = [];
+      var from = (data.t.pre === 1 || rows.some(function (s) { return s[1] === 0; })) ? 0 : 1;
+      var to = Math.max(data.t.n || 7, rows.reduce(function (m, s) { return Math.max(m, s[1]); }, 0));
+      for (var p = from; p <= to; p++) periods.push(p);
+
+      var table = $("table");
+      table.textContent = "";
+      var head = el("tr"); head.appendChild(el("th"));
+      days.forEach(function (d) { head.appendChild(el("th", T.days[d - 1])); });
+      table.appendChild(head);
+      periods.forEach(function (p) {
+        var tr = el("tr");
+        tr.appendChild(el("th", p === 0 ? T.pre : String(p) + ".", "p"));
+        days.forEach(function (d) {
+          var td = el("td");
+          var s = rows.filter(function (x) { return x[0] === d && x[1] === p; })[0];
+          if (s) {
+            td.appendChild(document.createTextNode(subjects[s[3]] || "–"));
+            if (s[4]) td.appendChild(el("small", String(s[4])));
+          }
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
+    }
+    draw();
+  }
+})();
+</script>
+</body>
+</html>
