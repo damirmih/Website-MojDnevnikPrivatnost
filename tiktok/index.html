@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moj Dnevnik · Preuzmi</title>
+<meta name="description" content="Moj Dnevnik: ocene, prosek i raspored časova. Besplatno, bez naloga i bez reklama.">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta property="og:title" content="Moj Dnevnik">
+<meta property="og:description" content="Ocene, prosek i raspored časova. Besplatno, bez naloga i bez reklama.">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="light dark">
+<!-- Stranica za link u TikTok bio-u. Bez spoljnih fontova, skripti i slika (ikonica je ugrađena),
+     pa ne šalje ništa trećim stranama. Kad Android izađe na Google Play, postavi playLive na true. -->
+<style>
+  :root {
+    --ground: #F2F5F6; --surface: #FFFFFF; --ink: #14232C; --ink-soft: #4A5D68;
+    --rule: #DCE3E6; --accent: #96212F; --accent-ink: #FFFFFF;
+    --shadow: 0 1px 2px rgba(20,35,44,.06), 0 8px 24px -12px rgba(20,35,44,.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0B141A; --surface: #131F27; --ink: #E8EFF2; --ink-soft: #A6B7C0;
+      --rule: #24343D; --accent: #C2394A; --accent-ink: #FFFFFF;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 28rem; margin: 0 auto; padding: 40px 16px 32px; text-align: center; }
+  .icon { width: 96px; height: 96px; border-radius: 22px; box-shadow: var(--shadow); display: block; margin: 0 auto 18px; }
+  h1 { font-size: 1.8rem; line-height: 1.15; margin: 0 0 8px; }
+  .lead { color: var(--ink-soft); font-size: 1.05rem; margin: 0 0 22px; }
+  .card { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); padding: 16px; margin-bottom: 16px; text-align: left; }
+  .btn {
+    display: flex; align-items: center; justify-content: center; min-height: 54px; width: 100%;
+    border-radius: 14px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink);
+    font: inherit; font-weight: 600; font-size: 1.05rem; text-decoration: none; padding: 0 16px; margin-top: 10px;
+  }
+  .btn:first-child { margin-top: 0; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+  .hint { color: var(--ink-soft); font-size: .92rem; margin: 10px 2px 0; text-align: center; }
+  #soon { margin-top: 0; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { padding: 8px 0 8px 26px; position: relative; border-top: 1px solid var(--rule); }
+  li:first-child { border-top: 0; }
+  li::before { content: "✓"; position: absolute; left: 4px; color: var(--accent); font-weight: 700; }
+  footer { color: var(--ink-soft); font-size: .85rem; margin-top: 8px; }
+  footer a { color: var(--accent); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <img class="icon" alt="" width="96" height="96" src="data:image/png;base64,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">
+  <h1>Moj Dnevnik</h1>
+  <p class="lead" id="lead"></p>
+
+  <section class="card">
+    <a class="btn primary" id="ios" href="#" hidden></a>
+    <a class="btn primary" id="android" href="#" hidden></a>
+    <p class="hint" id="soon" hidden></p>
+    <p class="hint" id="desktop" hidden></p>
+  </section>
+
+  <section class="card">
+    <ul id="points"></ul>
+  </section>
+
+  <footer>
+    <span id="free"></span>
+    <a id="privacyLink" href="../"></a>
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // Podešavanja. playLive: true čim Android izađe na Google Play.
+  // iosProviderToken je „pt" iz App Store Connect → Analytics → Campaigns (može i prazno).
+  var CONFIG = {
+    iosId: "6808085105",
+    iosProviderToken: "",
+    playPackage: "com.mateja.mygrades",
+    playLive: false,
+    campaign: "tiktok"
+  };
+
+  var TEXT = {
+    sr: {
+      lead: "Ocene, prosek i raspored časova na jednom mestu.",
+      ios: "Preuzmi na App Store-u", android: "Preuzmi na Google Play-u",
+      soon: "Android verzija uskoro stiže na Google Play.",
+      desktop: "Otvori ovu stranicu na telefonu da preuzmeš aplikaciju.",
+      points: [
+        "Prosek i zaključna ocena, i šta ti treba za veću",
+        "Raspored časova, i na zaključanom ekranu",
+        "Obaveze i podsetnici za kontrolne",
+        "Obaveštenje pre kraja časa"
+      ],
+      free: "Besplatno, bez naloga i bez reklama.", privacy: "Politika privatnosti"
+    },
+    en: {
+      lead: "Grades, averages and your class schedule in one place.",
+      ios: "Download on the App Store", android: "Get it on Google Play",
+      soon: "The Android version is coming soon to Google Play.",
+      desktop: "Open this page on your phone to download the app.",
+      points: [
+        "Your average and final grade, and what you need for a higher one",
+        "Class schedule, also on the lock screen",
+        "Tasks and reminders for tests",
+        "Alert before the end of class"
+      ],
+      free: "Free, no account and no ads.", privacy: "Privacy policy"
+    }
+  };
+
+  var lang = (navigator.language || "sr").toLowerCase().indexOf("en") === 0 ? "en" : "sr";
+  var T = TEXT[lang];
+  document.documentElement.lang = lang;
+
+  var ua = navigator.userAgent || "";
+  var isIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/.test(ua);
+
+  var iosUrl = "https://apps.apple.com/app/id" + CONFIG.iosId + "?ct=" + CONFIG.campaign +
+    (CONFIG.iosProviderToken ? "&pt=" + encodeURIComponent(CONFIG.iosProviderToken) : "");
+  var playUrl = "https://play.google.com/store/apps/details?id=" + CONFIG.playPackage +
+    "&referrer=" + encodeURIComponent("utm_source=" + CONFIG.campaign + "&utm_medium=bio&utm_campaign=" + CONFIG.campaign);
+
+  function $(id) { return document.getElementById(id); }
+
+  $("lead").textContent = T.lead;
+  $("free").textContent = T.free + " ";
+  $("privacyLink").textContent = T.privacy;
+  T.points.forEach(function (text) {
+    var li = document.createElement("li");
+    li.textContent = text;
+    $("points").appendChild(li);
+  });
+
+  var ios = $("ios"), android = $("android");
+  ios.textContent = T.ios; ios.href = iosUrl;
+  android.textContent = T.android; android.href = playUrl;
+
+  if (isIOS) {
+    ios.hidden = false;
+  } else if (isAndroid) {
+    if (CONFIG.playLive) android.hidden = false;
+    else { $("soon").textContent = T.soon; $("soon").hidden = false; }
+  } else {
+    // Računar: obe prodavnice (Google Play tek kad je živ), uz napomenu da se otvori na telefonu.
+    ios.hidden = false;
+    if (CONFIG.playLive) { android.hidden = false; android.className = "btn"; }
+    $("desktop").textContent = T.desktop; $("desktop").hidden = false;
+  }
+})();
+</script>
+</body>
+</html>
