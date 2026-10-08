@@ -277,12 +277,16 @@
     }
 
     function draw() {
-      var rows = slots.filter(function (s) { return s[2] === shift; });
+      // Link stiže od nepoznate osobe: čas van granica (dan 1–6, čas 0–12) se ne crta,
+      // inače bi jedan ogroman broj časa pravio milione redova i zaledio stranicu.
+      var rows = slots.filter(function (s) {
+        return s[2] === shift && s[0] >= 1 && s[0] <= 6 && s[1] >= 0 && s[1] <= 12;
+      });
       var days = [1, 2, 3, 4, 5];
       if (data.t.sat === 1 || rows.some(function (s) { return s[0] === 6; })) days.push(6);
       var periods = [];
       var from = (data.t.pre === 1 || rows.some(function (s) { return s[1] === 0; })) ? 0 : 1;
-      var to = Math.max(data.t.n || 7, rows.reduce(function (m, s) { return Math.max(m, s[1]); }, 0));
+      var to = Math.min(12, Math.max(data.t.n || 7, rows.reduce(function (m, s) { return Math.max(m, s[1]); }, 0)));
       for (var p = from; p <= to; p++) periods.push(p);
 
       var table = $("table");
